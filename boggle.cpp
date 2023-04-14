@@ -95,5 +95,25 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
-
+    // Reaches end of board, then searches for a valid longest word and keeps backtracking till a valid word is found
+    if (r == board.size() || c == board.size()){ // Reached the end of the board, so check if word is in the dictionary
+        if (dict.find(word) != dict.end()) {
+            result.insert(word);
+            return true;
+        } else return false;
+    }
+    if (prefix.find(word) == prefix.end() && dict.find(word) != dict.end()){ // Word is NOT a prefix but IS in the dictionary
+        result.insert(word);
+        return true;
+    } else if (prefix.find(word) == prefix.end() && dict.find(word) == dict.end()){ // Word is in neither a prefix nor in the dictionary
+        return false;
+    }
+    word += board[r][c];
+    bool nextLetterValid = boggleHelper(dict, prefix, board, word, result, r+dr, c+dc, dr, dc);
+    if (nextLetterValid){ // Next letter added to word creates a word in the dictionary
+        return true;
+    } else if (dict.find(word.substr(0, word.size()-1)) != dict.end()){ // Current word is in the dictionary
+        result.insert(word.substr(0, word.size()-1));
+        return true;
+    } else return false;
 }
